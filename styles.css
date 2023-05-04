@@ -1,0 +1,22 @@
+* {
+    font-size: 20;
+    font-family: 'Segoe UI';
+}
+
+body{
+    padding: 20;
+}
+
+input {
+    padding: 10;
+    width: 300px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+input[type='submit'] {
+    margin-top: 20px;
+}

@@ -1,0 +1,37 @@
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/styles.css">
+    <title>Test</title>
+
+    <script>
+        window.addEventListener('load', () => {
+            var locationField = document.getElementById('location')
+            var result = document.getElementById('result')
+            locationField.addEventListener('keyup', () => {
+                const options = {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ location: locationField.value })
+                };
+                fetch('/locationSuggestions', options)
+                    .then(res => res.json())
+                    .then(res => {
+                        result.innerHTML = ''
+                        res.result.map(location => {
+                            result.insertAdjacentHTML('beforeend', `<p>${location.description}</p>`)
+                        })
+                    })
+            })
+        })
+    </script>
+</head>
+
+<body>
+    <p>Places AutoComplete</p>
+    <input type="text" id='location' placeholder="Location" />
+    <div id="result"></div>
+</body>
+
+</html>
