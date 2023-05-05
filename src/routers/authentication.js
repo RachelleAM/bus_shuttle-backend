@@ -72,7 +72,6 @@ router.post("/login", (req, res) => {
     ["studentEmail", par.studentEmail],
     ["studentSalt", par.studentSalt]
   );
-  console.log(par);
   connection.query(
     `SELECT * FROM student${queryConditions}`,
     function (error, results) {
@@ -96,7 +95,8 @@ router.post("/login", (req, res) => {
 
           if (!valid) res.status(400).send("Invalid username or password.");
           else {
-            const userId = user.ID;
+            const userId = user.studentID;
+            const userType = "student";
             // const firstName = user.firstName;
             // const lastName = user.lastName;
             const studentName = user.studentName;
@@ -105,7 +105,80 @@ router.post("/login", (req, res) => {
               { userId, studentName, studentEmail },
               process.env.ACCESS_TOKEN_SECRET
             );
-            res.status(200).json({ accessToken, userId, studentName });
+            res
+              .status(200)
+              .json({ accessToken, userId, userType, studentName });
+            console.log({ accessToken, userId, userType, studentName });
+          }
+        } else res.status(400).send("Invalid username or password.");
+      } else {
+        console.error(error);
+      }
+    }
+  );
+});
+router.post("/adminLogin", (req, res) => {
+  var par = req.body;
+  var queryConditions = buildQueryConditions(
+    ["adminID", par.adminID],
+    ["adminEmail", par.adminEmail]
+  );
+  connection.query(
+    `SELECT * FROM administrator${queryConditions}`,
+    function (error, results) {
+      if (results) {
+        if (results.length > 0) {
+          let user = results.pop();
+          console.log(par);
+          const { adminPassword } = user;
+          const valid = adminPassword === par.adminPassword;
+          if (!valid) res.status(400).send("Invalid username or password.");
+          else {
+            const userId = user.adminID;
+            const userType = "admin";
+            const adminName = user.adminName;
+            const adminEmail = user.adminEmail;
+            const accessToken = jwt.sign(
+              { userId, adminName, adminEmail },
+              process.env.ACCESS_TOKEN_SECRET
+            );
+            res.status(200).json({ accessToken, userId, userType, adminName });
+            console.log({ accessToken, userId, userType, adminName });
+          }
+        } else res.status(400).send("Invalid username or password.");
+      } else {
+        console.error(error);
+      }
+    }
+  );
+});
+router.post("/driverLogin", (req, res) => {
+  var par = req.body;
+  var queryConditions = buildQueryConditions(
+    ["driverID", par.driverID],
+    ["driverEmail", par.driverEmail]
+  );
+  connection.query(
+    `SELECT * FROM busdriver${queryConditions}`,
+    function (error, results) {
+      if (results) {
+        if (results.length > 0) {
+          let user = results.pop();
+          console.log(par);
+          const { drivePassword } = user;
+          const valid = drivePassword === par.drivePassword;
+          if (!valid) res.status(400).send("Invalid username or password.");
+          else {
+            const userId = user.driverID;
+            const userType = "driver";
+            const driverName = user.driverName;
+            const driverEmail = user.driverEmail;
+            const accessToken = jwt.sign(
+              { userId, driverName, driverEmail },
+              process.env.ACCESS_TOKEN_SECRET
+            );
+            res.status(200).json({ accessToken, userId, userType, driverName });
+            console.log({ accessToken, userId, userType, driverName });
           }
         } else res.status(400).send("Invalid username or password.");
       } else {
@@ -115,20 +188,20 @@ router.post("/login", (req, res) => {
   );
 });
 
-router.get("/universities", (req, res) => {
-  console.log(req.params);
-  connection.query(
-    `SELECT ID,name FROM UNIVERSITY `,
-    function (error, results) {
-      if (results) {
-        let universities = results;
-        res.json(universities);
-      } else {
-        console.error(error);
-      }
-    }
-  );
-});
+// router.get("/universities", (req, res) => {
+//   console.log(req.params);
+//   connection.query(
+//     `SELECT ID,name FROM UNIVERSITY `,
+//     function (error, results) {
+//       if (results) {
+//         let universities = results;
+//         res.json(universities);
+//       } else {
+//         console.error(error);
+//       }
+//     }
+//   );
+// });
 
 router.get("/campuses/:id", (req, res) => {
   const id = parseInt(req.params.id);
