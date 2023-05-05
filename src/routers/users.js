@@ -38,7 +38,7 @@ router.get("/", (req, res) => {
 router.get("/:id", (req, res) => {
   const id = parseInt(req.params.id);
   connection.query(
-    `SELECT * FROM student WHERE ID= ${id}`,
+    `SELECT * FROM student WHERE studentID= ${id}`,
     function (error, results) {
       if (results) {
         var user = results;
@@ -51,13 +51,16 @@ router.get("/:id", (req, res) => {
 
 router.patch("/:id", (req, res) => {
   const id = req.params.id;
+  console.log(req.body);
+  console.log(id);
   connection.query(
-    `UPDATE student SET studentName = '${req.body.firstName}', lastName = '${req.body.lastName}', phoneNumber = '${req.body.phoneNumber}', dateOfBirth = '${req.body.dateOfBirth}'  WHERE ID = ${id};`,
+    `UPDATE student SET studentName = '${req.body.fullName}', studentPhoneNumber = '${req.body.phoneNumber}', studentAddress = '${req.body.address}' , studentMainCampus = '${req.body.mainCampus}'  WHERE studentID = ${id};`,
     function (error, results) {
       if (results) {
         res.status(200).json({
-          firstName: req.body.firstName,
-          lastName: req.body.lastName,
+          // firstName: req.body.firstName,
+          // lastName: req.body.lastName,
+          fullName: req.body.fullName,
         });
       } else console.error(error);
     }
@@ -110,7 +113,7 @@ router.post("/license/:id", (req, res) => {
       res.status(500).json({ message: err });
     } else {
       connection.query(
-        `UPDATE STUDENT SET verifiedDriver = 'INSERTED' WHERE ID = ${id};`,
+        `UPDATE student SET verifiedDriver = 'INSERTED' WHERE ID = ${id};`,
         function (error, results) {
           if (results) {
             res.status(200).json("Added license");
@@ -127,7 +130,7 @@ router.post("/license/:id", (req, res) => {
 router.get("/license/:id", (req, res) => {
   const id = parseInt(req.params.id);
   connection.query(
-    `SELECT verifiedDriver FROM STUDENT WHERE ID = ${id};`,
+    `SELECT verifiedDriver FROM student WHERE ID = ${id};`,
     function (error, results) {
       if (results) {
         let drivingLicense = results;

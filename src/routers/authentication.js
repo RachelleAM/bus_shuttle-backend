@@ -45,9 +45,10 @@ router.post("/register", (req, res) => {
           const query = generateCreateQuery(data[0], [data[1]], "student");
           connection.query(query, function (error, results) {
             if (results) {
-              const userId = results.insertId;
+              const userId = results.studentID;
+              const fullName = results.studentName;
               const accessToken = jwt.sign(
-                { userId },
+                { userId, fullName },
                 process.env.ACCESS_TOKEN_SECRET
               );
               console.log(results);
@@ -99,16 +100,14 @@ router.post("/login", (req, res) => {
             const userType = "student";
             // const firstName = user.firstName;
             // const lastName = user.lastName;
-            const studentName = user.studentName;
+            const fullName = user.studentName;
             const studentEmail = user.studentEmail;
             const accessToken = jwt.sign(
-              { userId, studentName, studentEmail },
+              { userId, fullName, studentEmail },
               process.env.ACCESS_TOKEN_SECRET
             );
-            res
-              .status(200)
-              .json({ accessToken, userId, userType, studentName });
-            console.log({ accessToken, userId, userType, studentName });
+            res.status(200).json({ accessToken, userId, userType, fullName });
+            console.log({ accessToken, userId, userType, fullName });
           }
         } else res.status(400).send("Invalid username or password.");
       } else {
@@ -136,14 +135,13 @@ router.post("/adminLogin", (req, res) => {
           else {
             const userId = user.adminID;
             const userType = "admin";
-            const adminName = user.adminName;
+            const fullName = user.adminName;
             const adminEmail = user.adminEmail;
             const accessToken = jwt.sign(
-              { userId, adminName, adminEmail },
+              { userId, fullName, adminEmail },
               process.env.ACCESS_TOKEN_SECRET
             );
-            res.status(200).json({ accessToken, userId, userType, adminName });
-            console.log({ accessToken, userId, userType, adminName });
+            res.status(200).json({ accessToken, userId, userType, fullName });
           }
         } else res.status(400).send("Invalid username or password.");
       } else {
@@ -171,14 +169,14 @@ router.post("/driverLogin", (req, res) => {
           else {
             const userId = user.driverID;
             const userType = "driver";
-            const driverName = user.driverName;
+            const fullName = user.driverName;
             const driverEmail = user.driverEmail;
             const accessToken = jwt.sign(
-              { userId, driverName, driverEmail },
+              { userId, fullName, driverEmail },
               process.env.ACCESS_TOKEN_SECRET
             );
-            res.status(200).json({ accessToken, userId, userType, driverName });
-            console.log({ accessToken, userId, userType, driverName });
+            res.status(200).json({ accessToken, userId, userType, fullName });
+            // console.log({ accessToken, userId, userType, driverName });
           }
         } else res.status(400).send("Invalid username or password.");
       } else {
